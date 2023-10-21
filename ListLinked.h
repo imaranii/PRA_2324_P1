@@ -26,20 +26,24 @@ class ListLinked : public List<T> {
 		};
 
 		T operator[](int pos){
-			Node<T>* punt = first;
-			for(int i = 0; i<=pos; i++){
-				if(i == pos){
-					return punt->data;
-				}
-			punt = punt->next;
-			}
-		};
+			if(pos < 0 || pos >= n){
+                                throw std::out_of_range("Fuera de rango");
+                        }
+                        else{
+                                Node<T>* aux = first;
+                                for(int i = 0 ; i != pos ; i++){
+                                        aux = aux->next;
+                                };
+                                return aux->data;
+                        };
+                };
+
 
 
 		friend std::ostream& operator<<(std::ostream &out, const ListLinked<T> &list){
 			Node<T>* aux =list.first;
 			while(aux != nullptr){
-				out << aux->data <<" ";
+				out << aux->data <<" " ;
 				aux = aux->next;
 
 			};
@@ -47,25 +51,36 @@ class ListLinked : public List<T> {
 		};
 		
 		void insert(int pos, T e) override final{
-			Node<T>*  aux = first , preaux = nullptr;
-			for(int i = 0 ; i <= pos ; i++){
-				if(i == n){
-					throw std::out_of_range("Fuera de rango");
-				};
-				if(i==pos){
-					Node<T>* nuevo = new Node(e,aux->next);
-					preaux->next = nuevo;
-					n++;
-					break;
-				};
+			if(pos < 0 || pos > n){
+				throw std::out_of_range("Fuera de rango");
+			}
+			else{
+				Node<T>* aux = first;
+                        	Node<T>* preaux = nullptr;
 
-				preaux = aux;
-				aux = aux->next;
+				for(int i = 0 ; i != pos ; i++){ 
+					preaux = aux;
+					aux = aux-> next;
+				}
+
+				Node<T>* nuevo = new Node(e , aux );
+
+				if(pos == 0){
+					nuevo->next = first;
+					first = nuevo;
+				}
+				else{
+					preaux->next = nuevo;
+					nuevo->next = aux;
+				}
+
+				n++;	
 			};
 		};
+			
 
 		void append(T e) override final{
-			insert(n-1 , e);
+			insert(n , e);
 		};
 
 		void prepend(T e) override final{
@@ -73,38 +88,44 @@ class ListLinked : public List<T> {
 		};
 
 		T remove(int pos) override final{
-			Node<T>*  aux = first , preaux = nullptr;
-        	        for(int i = 0 ; i <= pos ; i++){
-                		if(i == n){
-                        		throw std::out_of_range("Fuera de rango");
-                                };
-                               	if(i==pos){	
+			if(pos < 0 || pos >= n){
+                                throw std::out_of_range("Fuera de rango");
+                        }
+                        else{
+                                Node<T>* aux = first;
+                                Node<T>* preaux = nullptr;
+
+                                for(int i = 0 ; i != pos ; i++){
+                                        preaux = aux;
+                                        aux = aux-> next;
+                                }
+				
+				T valor = aux->data;
+				n--;
+
+                                if(pos == 0){
+					first = aux->next;
+					return valor;
+				}
+				else{
 					preaux->next = aux->next;
 					delete aux;
-					n--;
-					break;
+					return valor;
                         	};
-
-                              	preaux = aux;
-                                aux = aux->next;
-                        };
-                };
-
+                	};
+		};
 		T get(int pos) override final{
-			Node<T>*  aux = first , preaux = nullptr;
-                        for(int i = 0 ; i <= pos ; i++){
-                                if(i == n){
-                                        throw std::out_of_range("Fuera de rango");
-                                };
-                                if(i==pos){
-                                        return aux->data;
-					break;
-                                };
-
-                                preaux = aux;
-                                aux = aux->next;
-                        };
-                };
+			if(pos < 0 || pos >= n){
+                                throw std::out_of_range("Fuera de rango");
+                        }
+                        else{
+				Node<T>* aux = first;
+				for(int i = 0 ; i != pos ; i++){
+					aux = aux->next;
+				};
+				return aux->data;
+			};
+		};
 
 		int search(T e) override final{
 			Node<T>*  aux = first;
@@ -112,11 +133,11 @@ class ListLinked : public List<T> {
                                 if(aux->data = e){
 					return i;
 				};
-				if(i == n-1){
-					return -1;
-				};
+			};
+				
+			return -1;
+				
                                         
-                        };
                 };
 
 		bool empty() override final{
